@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class SrvTry {
+public class ServerMain {
 
 	@SuppressWarnings("resource")
 	public static void main(String[] args) {
@@ -33,7 +33,7 @@ public class SrvTry {
 				e.printStackTrace();
 			}
 			
-			new SrvThread(s).start(); //creo un nuovo thread passando per parametro il socket del client
+			new ServerThread(s).start(); //creo un nuovo thread passando per parametro il socket del client
 		}		
 
 	}
