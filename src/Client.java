@@ -43,24 +43,6 @@ public class Client {
         }
     }
 
-    private void richiesta() {
-        try {
-
-            // Thread.sleep(1000);
-            System.out.print("Scrivi cosa vuoi che dica il server ('stop' per terminare il server): ");
-            String input = sc.nextLine();
-            System.out.println("\n");
-            dout.writeUTF(input);
-
-            if ("stop".equalsIgnoreCase(input)) {
-                bool_listenSrv = false;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void listenForServerMessages() {
         while (bool_listenSrv) {
             try {
@@ -74,7 +56,6 @@ public class Client {
                     closeConnection();
 
                     System.exit(0);
-                    
 
                 }
             } catch (IOException e) {
