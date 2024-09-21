@@ -4,7 +4,7 @@ Socket? socket;
 
 Future connectToServer() async {
   // Stabilisce la connessione al server
-  socket = await Socket.connect('192.168.1.4', 3333); // Usa l'IP corretto
+  socket = await Socket.connect('192.168.1.2', 3333); // Usa l'IP corretto
 
   print('Connesso al server');
 
