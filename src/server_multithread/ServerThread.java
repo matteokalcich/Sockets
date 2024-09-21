@@ -1,71 +1,50 @@
 package server_multithread;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
+
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.Scanner;
 
 public class ServerThread extends Thread {
-	
-	Socket s = null;
-	
+
+	private Socket s;
 
 	public ServerThread(Socket s) {
-		
 		this.s = s;
 	}
-	
-	
+
 	public void run() {
-		
 		try {
-			
-			
-			DataInputStream din = null;
-			
-			DataOutputStream dout = null;
-			
-			din=new DataInputStream(s.getInputStream());
-			dout=new DataOutputStream(s.getOutputStream());      
-			String str=""; 
-			System.out.println("Connesso a un client");    
-			while(true){  
-				
-				str=din.readUTF();
-				
-				if(!str.equals("stop")) {
-					
-					System.out.println("Risposta dal client " + s.getInetAddress().getHostName() + " client: " + str);  
+			// Crea stream di input e output
+			BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+
+			System.out.println("In attesa di messaggi dal client...");
+
+			String clientMessage;
+			// Legge messaggi dal client
+			while ((clientMessage = in.readLine()) != null) {
+				System.out.println("Messaggio dal client: " + clientMessage);
+
+				// Controlla se il client vuole terminare la connessione
+				if (clientMessage.equalsIgnoreCase("exit")) {
+					System.out.println("Il client ha terminato la connessione.");
+					out.println("Chiuso");
+					break; // Uscire dal ciclo chiude la connessione
 				}
-				
-				else {
-					
-					dout.writeUTF("Server terminato");
-					din.close();  
-					s.close();  
-					
-				}
-				  
+
+				// Risponde al client
+				out.println("Server ha ricevuto il messaggio: " + clientMessage);
 			}
-			
-			
-		} catch(SocketException e) {
-			
-			System.out.println("Client disconnesso");
-			
-		} catch(EOFException e) {
-			
-			System.out.println("Client disconnesso");
-		}
-		
-		catch(IOException e) {
-			
+
+			// Chiude la connessione
+			in.close();
+			out.close();
+			s.close();
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
 	}
 }

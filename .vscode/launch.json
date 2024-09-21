@@ -4,25 +4,25 @@
     // Per altre informazioni, visitare: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        // {
-        //     "type": "java",
-        //     "name": "Current File",
-        //     "request": "launch",
-        //     "mainClass": "${file}"
-        // },
         {
             "type": "java",
-            "name": "MainClient",
+            "name": "ServerMain",
             "request": "launch",
-            "mainClass": "MainClient",
+            "mainClass": "server_multithread.ServerMain",
+            "projectName": "Sockets"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Server",
+            "request": "launch",
+            "mainClass": "Server",
             "projectName": "Sockets"
         }
-        // {
-        //     "type": "java",
-        //     "name": "Server",
-        //     "request": "launch",
-        //     "mainClass": "Server",
-        //     "projectName": "Sockets"
-        // }
     ]
 }
