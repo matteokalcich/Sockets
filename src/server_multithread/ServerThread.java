@@ -9,6 +9,8 @@ import java.net.Socket;
 public class ServerThread extends Thread {
 
 	private Socket s;
+	private BufferedReader in;
+	private PrintWriter out;
 
 	public ServerThread(Socket s) {
 		this.s = s;
@@ -17,9 +19,41 @@ public class ServerThread extends Thread {
 	public void run() {
 		try {
 			// Crea stream di input e output
-			BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-			PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			out = new PrintWriter(s.getOutputStream(), true);
 
+			
+			clientTest();
+			
+			
+			
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void closeConnection() {
+		
+		try {
+			
+			// Chiude la connessione
+			in.close();
+			out.close();
+			s.close();
+			System.exit(0);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	private void clientTest() {
+		
+		try {
+			
 			System.out.println("In attesa di messaggi dal client...");
 
 			String clientMessage;
@@ -37,14 +71,18 @@ public class ServerThread extends Thread {
 				// Risponde al client
 				out.println("Server ha ricevuto il messaggio: " + clientMessage);
 			}
-
-			// Chiude la connessione
-			in.close();
-			out.close();
-			s.close();
-
-		} catch (IOException e) {
+			
+		} catch(IOException e) {
+			
 			e.printStackTrace();
 		}
+		
+		
+		
+		
+	}
+	private void conChiVuoiParlare(String dispositivo) {
+		
+		
 	}
 }
