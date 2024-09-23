@@ -1,3 +1,1 @@
-# flutterclient
-
-A new Flutter project.
+A flutter project written to communicate with the java server
