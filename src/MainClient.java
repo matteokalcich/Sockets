@@ -1,7 +1,17 @@
+
+import java.util.Scanner;
+
+import ui.Frame;
+
 public class MainClient {
 
     public static void main(String[] args) {
-        Client c = new Client();
+    	
+//    	Scanner sc = new Scanner(System.in);
+//    	System.out.print("Nome client: ");
+    	
+       /* Client c =*/ new Client();
+       
     }
 
 }

@@ -1,32 +1,53 @@
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+
+import ui.Frame;
 
 public class Client {
 
     Socket s = null;
-    BufferedReader din = null;
-    PrintWriter dout = null;
+    //String name_client;
+    BufferedReader in_stream = null;
+    PrintWriter out_stream = null;
     Scanner sc = new Scanner(System.in);
     private boolean bool_listenSrv = true;
     private boolean bool_inptCapt = true;
-
+    DefaultListModel<String> chat_clients;
+    Frame f;
+    
     public Client() {
         try {
-            s = new Socket("192.168.1.2", 3333);
+            s = new Socket("192.168.199.27", 3333);
 
-            din = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            dout = new PrintWriter(new OutputStreamWriter(s.getOutputStream()), true);
+            chat_clients = new DefaultListModel<String>();
+            
+            in_stream = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            out_stream = new PrintWriter(s.getOutputStream(), true);
+            
+            f = new Frame(chat_clients);
+            //this.name_client = name_client;
 
-            // Start a separate thread to listen for server messages
+            // Creo thread che ascolta per messaggi del server
             new Thread(this::listenForServerMessages).start();
 
-            // Start a thread to capture the input until the user writes "stop"
+            // Creo thread che cattura sempre un input fino allas stringa 'exit'
             new Thread(this::captureInput).start();
+            
+
+            
+            
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -36,18 +57,38 @@ public class Client {
     private void listenForServerMessages() {
         while (bool_listenSrv) {
             try {
-                String input = din.readLine();
+                String input = in_stream.readLine();
 
                 if ("stop".equalsIgnoreCase(input)) {
-                    System.out.println(input);
+                    System.out.print("\n - " + input);
                     closeConnection();
                     System.exit(0);
-                } else {
+                    
+                } else if(input.contains("List")){
+                	
+                	String[] tmp = input.split(",");
+                	
+                	chat_clients = new DefaultListModel<String>();
+                	
+                	for(int i=1; i<tmp.length; i++) {
+                		
+                		chat_clients.addElement(tmp[i]);
+                		
+                	}
+                	
+                	f.updateList(chat_clients);
+             
+                }
+                
+                else {
                     System.out.println("Risposta del server: " + input);
                 }
+                
             } catch (IOException e) {
                 if (bool_listenSrv) {
                     e.printStackTrace();
+                    System.err.println("Server terminato");
+                    break;
                 }
             }
         }
@@ -59,7 +100,7 @@ public class Client {
             try {
                 System.out.print("\n - ");
                 String input = sc.nextLine();
-                dout.println(input); // Invia il messaggio al server
+                out_stream.println(input); // Invia il messaggio al server
                 if ("chiuso".equalsIgnoreCase(input)) {
                     bool_listenSrv = false;
                 }
@@ -72,11 +113,13 @@ public class Client {
     private void closeConnection() {
         try {
             bool_listenSrv = false;
-            din.close();
-            dout.close();
+            in_stream.close();
+            out_stream.close();
             s.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    
+
 }
