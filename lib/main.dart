@@ -1,11 +1,11 @@
 import 'dart:io';
+import 'dart:isolate';
 
 Socket? socket;
 
-Future connectToServer() async {
+Future<void> connectToServer() async {
   // Stabilisce la connessione al server
-  socket = await Socket.connect('192.168.1.2', 3333); // Usa l'IP corretto
-
+  socket = await Socket.connect('192.168.36.27', 3333); // Usa l'IP corretto
   print('Connesso al server');
 
   // Ascolta i dati provenienti dal server
@@ -16,11 +16,9 @@ Future connectToServer() async {
     }
     print('Server: ${String.fromCharCodes(data).trim()}');
   });
-
-  return 0;
 }
 
-Future sendMessage(String message) async {
+Future<void> sendMessage(String message) async {
   if (socket != null) {
     // Invia un messaggio al server
     socket!.writeln(
@@ -29,8 +27,6 @@ Future sendMessage(String message) async {
   } else {
     print("Socket non connesso");
   }
-
-  return 0;
 }
 
 void closeConnection() {
@@ -42,16 +38,32 @@ void closeConnection() {
   }
 }
 
+void inputListener(SendPort sendPort) {
+  // Funzione per leggere l'input in un Isolate separato
+  while (true) {
+    String? input = "ciao"; // Legge l'input dall'utente
+    if (input == null || input.trim().toLowerCase() == 'exit') {
+      sendPort.send('exit'); // Invia un messaggio al main per chiudere
+      break; // Esci dal ciclo
+    }
+    sendPort.send(input.trim()); // Invia l'input al main
+  }
+}
+
 void main() async {
   // Connessione al server
   await connectToServer();
 
-  // Invia messaggi al server senza chiudere la connessione
-  await sendMessage('Ciao dal client Flutter!');
-  await sendMessage('Un altro messaggio');
+  // Crea un ReceivePort per ricevere messaggi dall'inputListener
+  final receivePort = ReceivePort();
+  Isolate.spawn(inputListener, receivePort.sendPort);
 
-  // Chiudi la connessione quando necessario
-  await Future.delayed(
-      Duration(seconds: 5)); // Attendere prima di chiudere la connessione
-  closeConnection();
+  await for (var message in receivePort) {
+    if (message == 'exit') {
+      closeConnection();
+      break; // Esci dal ciclo principale
+    } else {
+      await sendMessage(message); // Invia il messaggio al server
+    }
+  }
 }
