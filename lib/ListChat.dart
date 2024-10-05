@@ -41,11 +41,9 @@ class _ListChatState extends State<ListChat> {
               },
             ),
             TextButton(
-              
-              onPressed: _addClient, // Aggiunge il cliente
+              onPressed: _addClient, // Aggiunge il client
 
               child: const Text('Aggiungi'),
-              
             ),
           ],
         );
@@ -58,6 +56,7 @@ class _ListChatState extends State<ListChat> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('List Chat'),
+         
       ),
       body: Column(
         children: [
