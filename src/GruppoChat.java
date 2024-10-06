@@ -71,7 +71,7 @@ public class GruppoChat {
 		
 		for(Socket s : clients) {
 			
-			if(s == clients) {
+			if(s == toAdd) {
 				
 				return "utente già presente";
 				
@@ -114,6 +114,18 @@ public class GruppoChat {
 		}
 		
 		return false;
+		
+	}
+	
+	public String getList() {
+		
+		String tmp = "";
+		
+		for(Socket x : clients) {
+			tmp += "\t User: " + x.getInetAddress().getHostName() + "\n";
+		}
+		
+		return tmp;
 		
 	}
 	
