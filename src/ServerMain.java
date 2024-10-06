@@ -16,6 +16,7 @@ public class ServerMain {
 		List<Socket> sockets_list = new ArrayList<Socket>();
 		
 		List<GruppoChat> gruppi_list = new ArrayList<GruppoChat>();
+		int clientsOnline = 0;
 
 		try {
 			ss = new ServerSocket(3333);
@@ -32,15 +33,24 @@ public class ServerMain {
 			try {
 
 				client_socket = ss.accept();
+				clientsOnline++;
 
 			} catch (IOException e) {
 
 				e.printStackTrace();
 			}
-
-			sockets_list.add(client_socket);
-			new ClientHandler(client_socket, sockets_list, gruppi_list).start(); // creo un nuovo thread passando per parametro il socket del client
-			checkList(sockets_list);
+			if(clientsOnline == 1) {
+				sockets_list.add(client_socket);
+				new ClientHandler(client_socket, sockets_list, gruppi_list, true).start(); // creo un nuovo thread passando per parametro il socket del client
+				checkList(sockets_list);
+			}
+			else
+			{
+				sockets_list.add(client_socket);
+				new ClientHandler(client_socket, sockets_list, gruppi_list, false).start(); // creo un nuovo thread passando per parametro il socket del client
+				checkList(sockets_list);
+			}
+			
 		}
 
 	}
