@@ -28,8 +28,48 @@ public class Client {
     Frame f;
     
     public Client() {
+
+        String ip = "";
+        int port = 0;
+
+        try{
+
+            System.out.print("IP: ");
+            ip = sc.nextLine();
+
+        } catch(Exception e){
+
+
+        }
+
+
+        boolean tmp = true;
+
+
+        while(tmp){
+
+
+            try{
+
+                System.out.print("PORT: ");
+                port  = Integer.parseInt(sc.nextLine());
+                tmp = false;
+            
+            } catch(NumberFormatException e){
+    
+                System.err.println("Si prega di inserire solo numeri");
+                tmp = true;
+            }
+
+        }
+
+        
+        
+
+        
+
         try {
-            s = new Socket("192.168.36.186", 3333);
+            s = new Socket(ip, port);
 
             chat_clients = new DefaultListModel<String>();
             
