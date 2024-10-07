@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import ui.Frame;
 
@@ -34,8 +35,9 @@ public class Client {
 
         try{
 
-            System.out.print("IP: ");
-            ip = sc.nextLine();
+            ip = JOptionPane.showInputDialog(null, "IP: ");
+
+            
 
         } catch(Exception e){
 
@@ -51,8 +53,7 @@ public class Client {
 
             try{
 
-                System.out.print("PORT: ");
-                port  = Integer.parseInt(sc.nextLine());
+                port = Integer.parseInt(JOptionPane.showInputDialog(null, "IP: "));
                 tmp = false;
             
             } catch(NumberFormatException e){
