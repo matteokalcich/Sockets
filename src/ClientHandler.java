@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,15 +161,25 @@ public class ClientHandler extends Thread {
 	private void updateList() throws IOException {
 		
 		for(Socket x : sockets_list) {
-			 PrintWriter broadcast_stream = new PrintWriter(x.getOutputStream(), true);
-			 String tmp = "List,";
-			 for(Socket y : sockets_list) {
-					if(y != x) {
-						tmp += y.getInetAddress().getHostName() + ",";
+			if(x.isClosed()) {
+				 sockets_list.remove(x);
+			 }
+		}
+		
+		for(Socket x : sockets_list) {
+			 
+			 
+				 PrintWriter broadcast_stream = new PrintWriter(x.getOutputStream(), true);
+				 String tmp = "List,";
+				 for(Socket y : sockets_list) {
+						if(y != x) {
+							tmp += y.getInetAddress().getHostName() + ",";
+						}
 					}
-				}
-			 broadcast_stream.println(tmp);
-			 //broadcast_stream.println(clientMessage);
+				 broadcast_stream.println(tmp);
+				 //broadcast_stream.println(clientMessage);
+			 
+			 
 		}
 	}
 	
@@ -176,8 +187,7 @@ public class ClientHandler extends Thread {
 	private void clientTest() {
 		
 		try {
-			
-			updateList();	
+			updateList();
 			if(admin != null) {
 				out.println("Sei l'admin! (primo utente collegato)");
 			}
@@ -189,6 +199,7 @@ public class ClientHandler extends Thread {
 			
 			// Legge messaggi dal client
 			while ((clientMessage = in.readLine()) != null) {
+				updateList();
 				System.out.println("Messaggio dal client " + s.getInetAddress().getHostName() + ": " + clientMessage);
 
 				// Controlla se il client vuole terminare la connessione
@@ -275,6 +286,14 @@ public class ClientHandler extends Thread {
 				}
 			}
 			
+		}catch(SocketException e) {
+			
+			try {
+				s.close();
+				updateList();
+			}catch(IOException t) {
+				t.printStackTrace();
+			}
 		} catch(IOException e) {
 			
 			e.printStackTrace();
@@ -284,20 +303,22 @@ public class ClientHandler extends Thread {
 		
 		
 	}
-
-	private String getListNewGroup(){
-
+	
+	private String getListNewGroup() {
+		
 		String tmp = "";
 
-		for(int i=0; i<sockets_list.size(); i++){
+		for(int i = 0; i < sockets_list.size(); i++) {
 
 			if(!checkSockets(sockets_list.get(i))){
 
 				tmp += i + " -> " + sockets_list.get(i).getInetAddress().getHostName() + "\n";
 			}
+						
 		}
 
 		return tmp;
+		
 	}
 	
 	private void broadcast(String toSend) {

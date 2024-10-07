@@ -40,15 +40,17 @@ public class ServerMain {
 				e.printStackTrace();
 			}
 			if(clientsOnline == 1) {
+				checkList(sockets_list);
 				sockets_list.add(client_socket);
 				new ClientHandler(client_socket, sockets_list, gruppi_list, true).start(); // creo un nuovo thread passando per parametro il socket del client
-				checkList(sockets_list);
+				
 			}
 			else
 			{
+				checkList(sockets_list);
 				sockets_list.add(client_socket);
 				new ClientHandler(client_socket, sockets_list, gruppi_list, false).start(); // creo un nuovo thread passando per parametro il socket del client
-				checkList(sockets_list);
+				
 			}
 			
 		}
