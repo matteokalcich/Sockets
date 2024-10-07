@@ -9,13 +9,5 @@ public class Admin {
 		
 		return "sei l'admin";
 	}
-	
-	
-//	public void creaGruppo() {
-//		
-//		GruppoChat gruppo_g = new GruppoChat(null)
-//	}
-//	
-//	public void 
 
 }
