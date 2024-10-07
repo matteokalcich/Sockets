@@ -12,8 +12,8 @@ import java.util.Scanner;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
-import ui.Frame;
 
 public class Client {
 
@@ -25,18 +25,54 @@ public class Client {
     private boolean bool_listenSrv = true;
     private boolean bool_inptCapt = true;
     DefaultListModel<String> chat_clients;
-    Frame f;
     
     public Client() {
-        try {
-            s = new Socket("192.168.36.186", 3333);
 
-            chat_clients = new DefaultListModel<String>();
+        String ip = "";
+        int port = 0;
+
+        try{
+
+            System.out.print("IP: ");
+            ip = sc.nextLine();
+            
+
+        } catch(Exception e){
+
+
+        }
+
+
+        boolean tmp = true;
+
+
+        while(tmp){
+
+
+            try{
+
+                System.out.print("PORT: ");
+                port = Integer.parseInt(sc.nextLine());
+                tmp = false;
+            
+            } catch(NumberFormatException e){
+    
+                System.err.println("Si prega di inserire solo numeri");
+                tmp = true;
+            }
+
+        }
+
+        
+        
+
+        
+
+        try {
+            s = new Socket(ip, port);
             
             in_stream = new BufferedReader(new InputStreamReader(s.getInputStream()));
             out_stream = new PrintWriter(s.getOutputStream(), true);
-            
-            f = new Frame(chat_clients);
             //this.name_client = name_client;
 
             // Creo thread che ascolta per messaggi del server
@@ -64,24 +100,11 @@ public class Client {
                     closeConnection();
                     System.exit(0);
                     
-                } else if(input.contains("List")){
-                	
-                	String[] tmp = input.split(",");
-                	
-                	chat_clients = new DefaultListModel<String>();
-                	
-                	for(int i=1; i<tmp.length; i++) {
-                		
-                		chat_clients.addElement(tmp[i]);
-                		
-                	}
-                	
-                	f.updateList(chat_clients);
-             
                 }
                 
                 else {
                     System.out.println("Risposta del server: " + input);
+
                 }
                 
             } catch (IOException e) {
