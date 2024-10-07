@@ -1,5 +1,8 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
+
+import 'package:flutter/foundation.dart';
 
 class ServerChat{
 
@@ -7,16 +10,29 @@ class ServerChat{
 
   Future<void> connectToServer() async {
     // Stabilisce la connessione al server
-    socket = await Socket.connect('localhost', 3333); // Usa l'IP corretto
+    socket = await Socket.connect('192.168.1.3', 3333); // Usa l'IP corretto
     print('Connesso al server');
+
+    
+  }
+
+  Future<void> serverListen() async{
+
+    return await compute(_listenForServerMsg);
+  }
+
+  void _listenForServerMsg() async{
 
     // Ascolta i dati provenienti dal server
     socket!.listen((data) {
       if ('Chiuso'.compareTo(String.fromCharCodes(data).trim()) == 0) {
         print('Server chiuso');
         closeConnection();
+      } else{
+
+        print('Risposta Server: ${String.fromCharCodes(data).trim()}');
       }
-      print('Server: ${String.fromCharCodes(data).trim()}');
+      
     });
   }
 
@@ -29,15 +45,15 @@ class ServerChat{
     }
   }
 
-  void inputListener(SendPort sendPort) {
+  void inputListener(String tmp) async{
     // Funzione per leggere l'input in un Isolate separato
     while (true) {
       String? input = "ciao"; // Legge l'input dall'utente
       if (input == null || input.trim().toLowerCase() == 'exit') {
-        sendPort.send('exit'); // Invia un messaggio al main per chiudere
+        
         break; // Esci dal ciclo
       }
-      sendPort.send(input.trim()); // Invia l'input al main
+      //sendPort.send(input.trim()); // Invia l'input al main
     }
   }
 

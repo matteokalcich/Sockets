@@ -1,6 +1,7 @@
 import 'dart:isolate';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterclient/ListChat.dart';
 import 'package:flutterclient/ServerChat.dart';
@@ -10,9 +11,11 @@ void main() async {
 
   await server.connectToServer();
 
-  final receivePort = ReceivePort();
+  //creo il "thread"
 
-  Isolate.spawn(server.inputListener, receivePort.sendPort);
+
+  await server.serverListen();
+
   //Run normale dell'app
   runApp(const MyApp());
 }
