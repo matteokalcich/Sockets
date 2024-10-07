@@ -215,7 +215,7 @@ public class ClientHandler extends Thread {
 					
 					String nome_gruppo = clientMessage;
 					
-					clientMessage = getList();
+					clientMessage = getListNewGroup();
 					
 					clientMessage += "\nche utenti vuoi aggiungere (numeri), per uscire digita '/exit'";
 					
@@ -283,6 +283,21 @@ public class ClientHandler extends Thread {
 		
 		
 		
+	}
+
+	private String getListNewGroup(){
+
+		String tmp = "";
+
+		for(int i=0; i<sockets_list.size(); i++){
+
+			if(!checkSockets(sockets_list.get(i))){
+
+				tmp += i + " -> " + sockets_list.get(i).getInetAddress().getHostName() + "\n";
+			}
+		}
+
+		return tmp;
 	}
 	
 	private void broadcast(String toSend) {
