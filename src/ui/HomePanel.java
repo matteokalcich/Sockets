@@ -11,8 +11,8 @@ public class HomePanel extends JPanel{
 	
 	public HomePanel(DefaultListModel<String> tmp) {
 		super();
-		JPanel left_chat = new ListChat(tmp);
-		JPanel right_chat = new ChosenChat();
+		ListChat left_chat = new ListChat(tmp);
+		ChosenChat right_chat = new ChosenChat();
 		this.setLayout(new BorderLayout());
 		left_chat.setBackground(Color.CYAN);
 		left_chat.setPreferredSize(new Dimension(300, 600));

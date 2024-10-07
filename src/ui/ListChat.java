@@ -31,6 +31,7 @@ public class ListChat extends JPanel {
 							if (item == tmp.get(i)) {
 								
 								JOptionPane.showMessageDialog(null, "I client coincidono");
+								
 							}
 						}
 						
