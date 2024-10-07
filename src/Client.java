@@ -29,7 +29,7 @@ public class Client {
     
     public Client() {
         try {
-            s = new Socket("192.168.199.27", 3333);
+            s = new Socket("192.168.36.186", 3333);
 
             chat_clients = new DefaultListModel<String>();
             
