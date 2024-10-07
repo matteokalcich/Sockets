@@ -166,21 +166,6 @@ public class ClientHandler extends Thread {
 			 }
 		}
 		
-		for(Socket x : sockets_list) {
-			 
-			 
-				 PrintWriter broadcast_stream = new PrintWriter(x.getOutputStream(), true);
-				 String tmp = "List,";
-				 for(Socket y : sockets_list) {
-						if(y != x) {
-							tmp += y.getInetAddress().getHostName() + ",";
-						}
-					}
-				 broadcast_stream.println(tmp);
-				 //broadcast_stream.println(clientMessage);
-			 
-			 
-		}
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -241,8 +226,41 @@ public class ClientHandler extends Thread {
 					
 				}
 				
+				else if(clientMessage.equalsIgnoreCase("/join")) {
+					
+					if(!gruppi_list.isEmpty()) {
+						clientMessage = "";
+						
+						out.println(getAllGroups());
+						
+						out.println("Inserisci il nome del gruppo a cui vuoi unirti: ");
+						
+						clientMessage = in.readLine();
+						GruppoChat temp = checkIsGroup(clientMessage);
+						
+						if(temp != null) {
+							
+							temp.aggiungiClient(s);
+							out.println("Ti sei unito al gruppo " + temp.getNomeGruppo());
+							
+						}
+						else
+						{
+							out.println("Gruppo inesistente!");
+						}
+						
+						
+						
+					}
+					else
+					{
+						out.println("Non esiste nessun gruppo! Prova ad usare /newGroup!");
+					}
+					
+				}
+				
 				else if(clientMessage.equalsIgnoreCase("/getGroups")) {
-					out.println(getGroups());
+					out.println(getAllGroups());
 				}
 				
 				else if(clientMessage.equalsIgnoreCase("/isAdmin")) {
@@ -262,7 +280,7 @@ public class ClientHandler extends Thread {
 					
 					String temp = "broadcast\n" + getList();
 					
-					temp += "\n" + checkGruppo();
+					temp += "\n" + getGroups();
 					
 					out.println(temp);
 					
@@ -295,12 +313,30 @@ public class ClientHandler extends Thread {
 				t.printStackTrace();
 			}
 		} catch(IOException e) {
-			
+			try {
+				updateList();
+			}catch(IOException t) {
+				t.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 		
 		
 		
+		
+	}
+	
+	private GruppoChat checkIsGroup(String toCheck) {
+		
+		for(GruppoChat x : gruppi_list) {
+			
+			if(x.getNomeGruppo().trim().equalsIgnoreCase(toCheck.trim())) {
+				return x;
+			}
+			
+		}
+		
+		return null;
 		
 	}
 	
@@ -338,6 +374,8 @@ public class ClientHandler extends Thread {
 		
 	}
 	
+	
+	//solo in quelli in cui s è presente
 	private String getGroups() {
 		
 		int n_gruppi = 0;
@@ -348,7 +386,6 @@ public class ClientHandler extends Thread {
 
 			if(x.findClient(s)) {
 				tmp += (n_gruppi++) + " -> " + x.getNomeGruppo() + "\n";
-				tmp += x.getList() + "\n";
 				
 			}
 						
@@ -357,6 +394,23 @@ public class ClientHandler extends Thread {
 		return tmp;
 		
 	}
+	
+	private String getAllGroups() {
+		int n_gruppi = 0;
+
+		String tmp = "";
+
+		for(GruppoChat x : gruppi_list) {
+
+			
+				tmp += (n_gruppi++) + " -> " + x.getNomeGruppo() + "\n";
+				
+			}
+		return tmp;
+						
+}
+
+		
 	
 	private void sendMessage(String nome, String toSend) {
 		
@@ -375,26 +429,13 @@ public class ClientHandler extends Thread {
 		for(GruppoChat y : gruppi_list) {
 			if(nome.equalsIgnoreCase(y.getNomeGruppo())) {
 
-				y.mandaMsg(toSend, s);
+				if(y.findClient(s)) {
+					y.mandaMsg(toSend, s);
+				}
 
 			}
 		}
 		
 	}
 	
-	private String checkGruppo() {
-		
-		String st = "";
-		
-		for(GruppoChat gc : gruppi_list) {
-			
-			if(gc.findClient(s))
-				st += gc.getNomeGruppo() + "\n"; 
-				
-			
-		}
-		
-		return st;
-		
-	}
 }
