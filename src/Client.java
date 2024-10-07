@@ -53,7 +53,7 @@ public class Client {
 
             try{
 
-                port = Integer.parseInt(JOptionPane.showInputDialog(null, "IP: "));
+                port = Integer.parseInt(JOptionPane.showInputDialog(null, "Port: "));
                 tmp = false;
             
             } catch(NumberFormatException e){
@@ -110,9 +110,12 @@ public class Client {
                 	String[] tmp = input.split(",");
                 	
                 	chat_clients = new DefaultListModel<String>();
+
+                    System.out.println("Lista client: ");
                 	
                 	for(int i=1; i<tmp.length; i++) {
                 		
+                        System.out.println(tmp[i]);
                 		chat_clients.addElement(tmp[i]);
                 		
                 	}
@@ -123,6 +126,7 @@ public class Client {
                 
                 else {
                     System.out.println("Risposta del server: " + input);
+                    f.updateList(chat_clients);
                 }
                 
             } catch (IOException e) {
