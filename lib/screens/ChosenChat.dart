@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterclient/MessageReceiver.dart';
+import 'package:flutterclient/backend/MessageReceiver.dart';
 import 'package:flutterclient/ServerChat.dart';
 
 class ChosenChat extends StatefulWidget {
