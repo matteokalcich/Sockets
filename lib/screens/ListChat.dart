@@ -49,7 +49,9 @@ class _ListChat extends State<ListChat> {
       MessageReceiver.instance.receivePort.listen((message) {
         setState(() {
           if (message.toString().contains("List")) {
-            if (item.length > message.toString().split(",").length) {
+
+            if(item.length > message.toString().split(",").length){
+
               //ciclo per aggiornare la lista se è stato eliminato qualcosa
             }
 
@@ -82,10 +84,16 @@ class _ListChat extends State<ListChat> {
           Expanded(
             child: ListView.builder(
               itemCount: clients.length,
+
               controller: _scrollController,
               itemBuilder: (context, index) {
+
+
                 return GestureDetector(
+
+                  
                   child: Container(
+
                     color: Colors.white,
                     child: IntrinsicWidth(
                       child: ListTile(
@@ -96,11 +104,20 @@ class _ListChat extends State<ListChat> {
                       ),
                     ),
                   ),
+
+
+
                   onTap: () {
-                    print('Hai cliccato ${index.toString()}');
+                    print('Hai cliccato ${clients[index]}');
+
+                    
                   },
                 );
+
+
               },
+
+            
             ),
           ),
         ],
