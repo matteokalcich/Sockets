@@ -96,7 +96,7 @@ class _ChosenChat extends State<ChosenChat> {
                   controller: _scrollController,
                   itemBuilder: (context, index) {
                     return Container(
-                      height: MediaQuery.of(context).size.height / 10,
+                      
                       color: Colors.black,
                       child: IntrinsicWidth(
                         child: ListTile(
