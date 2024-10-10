@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutterclient/backend/MessageReceiver.dart';
-import 'package:flutterclient/ServerChat.dart';
+
+import '../backend/MessageReceiver.dart';
+import '../backend/ServerChat.dart';
 
 class ChosenChat extends StatefulWidget {
   @override
@@ -91,24 +92,19 @@ class _ChosenChat extends State<ChosenChat> {
               ),
               child: Expanded(
                 child: ListView.builder(
-                  
                   itemCount: messages.length,
-
                   controller: _scrollController,
-
                   itemBuilder: (context, index) {
                     return Container(
                       height: MediaQuery.of(context).size.height / 10,
                       color: Colors.black,
                       child: IntrinsicWidth(
-                        
                         child: ListTile(
                           title: Text(
                             messages[index],
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
-                      
                       ),
                     );
                   },

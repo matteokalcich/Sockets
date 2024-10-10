@@ -1,5 +1,7 @@
 import 'dart:io';
-import 'package:flutterclient/backend/MessageReceiver.dart';
+
+import 'MessageReceiver.dart';
+
 
 
 class ServerChat {
