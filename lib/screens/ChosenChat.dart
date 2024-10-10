@@ -9,6 +9,11 @@ class ChosenChat extends StatefulWidget {
 }
 
 class _ChosenChat extends State<ChosenChat> {
+
+  String name_clients;
+
+  _ChosenChat({required Key key, required this.name_clients});
+  
   late ServerChat serverChat; // Istanza del server chat
   final List<String> messages = []; // Lista dei messaggi
   final TextEditingController _controller =
