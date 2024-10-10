@@ -4,17 +4,23 @@ import '../backend/MessageReceiver.dart';
 import '../backend/ServerChat.dart';
 
 class ChosenChat extends StatefulWidget {
+
+  final String name_clients; // Aggiungi il parametro a ChosenChat
+
+  // Costruttore per il widget ChosenChat
+  ChosenChat({required this.name_clients, Key? key}) : super(key: key);
+
   @override
   _ChosenChat createState() => _ChosenChat();
 }
 
+//TODO aggiungere possibilità mandare messaggi
+
 class _ChosenChat extends State<ChosenChat> {
 
-  String name_clients;
+  late String name_clients;
 
-  _ChosenChat({required Key key, required this.name_clients});
-  
-  late ServerChat serverChat; // Istanza del server chat
+  //late ServerChat serverChat; // Istanza del server chat
   final List<String> messages = []; // Lista dei messaggi
   final TextEditingController _controller =
       TextEditingController(); // Controller per la TextField
@@ -24,10 +30,10 @@ class _ChosenChat extends State<ChosenChat> {
   @override
   void initState() {
     super.initState();
-    serverChat = ServerChat(); // Inizializzo ServerChat
-    waitServerConnection(); // Avvio la connessione al server
+    //serverChat = ServerChat(); // Inizializzo ServerChat
+    //waitServerConnection(); // Avvio la connessione al server
   }
-
+  /*
   Future<void> waitServerConnection() async {
     await initServerConnection();
   }
@@ -62,6 +68,8 @@ class _ChosenChat extends State<ChosenChat> {
     }
   }
 
+  */
+
   // Scorri automaticamente verso l'ultimo messaggio
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -74,13 +82,15 @@ class _ChosenChat extends State<ChosenChat> {
   }
 
   // Invia un messaggio al server
-  void _sendMessage() {
+ /* void _sendMessage() {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
       serverChat.sendMessage(text); // Invia il messaggio
       _controller.clear(); // Pulisci il TextField
     }
   }
+
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -131,11 +141,12 @@ class _ChosenChat extends State<ChosenChat> {
                     ),
                   ),
                 ),
-                IconButton(
+                /*IconButton(
                   icon: Icon(Icons.send),
                   onPressed:
+                    
                       _sendMessage, // Chiama la funzione per inviare messaggi
-                ),
+                ),*/
               ],
             ),
           ),
