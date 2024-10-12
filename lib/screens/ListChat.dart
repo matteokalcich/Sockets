@@ -47,7 +47,7 @@ class _ListChat extends State<ListChat> {
       await MessageReceiver.instance.startListening();
 
       // Ascolto i messaggi ricevuti dall'Isolate
-      MessageReceiver.instance.receivePort.listen((message) {
+      MessageReceiver.instance.broadcastStream.listen((message) {
         setState(() {
           if (message.toString().contains("List")) {
             if (item.length > message.toString().split(",").length) {
@@ -99,9 +99,16 @@ class _ListChat extends State<ListChat> {
                   ),
                   onTap: () {
                     print('Hai cliccato ${clients[index]}');
-
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ChosenChat(name_clients: clients[index],)));
+                    MessageReceiver.instance.stopListening();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChosenChat(
+                          name_clients: clients[index],
+                          serverChat: serverChat,
+                        ),
+                      ),
+                    );
                   },
                 );
               },
