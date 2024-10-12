@@ -8,6 +8,13 @@
             "type": "java",
             "name": "ServerMain",
             "request": "launch",
+            "mainClass": "ServerMain",
+            "projectName": "Sockets"
+        },
+        {
+            "type": "java",
+            "name": "ServerMain",
+            "request": "launch",
             "mainClass": "server_multithread.ServerMain",
             "projectName": "Sockets"
         },

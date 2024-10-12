@@ -158,10 +158,19 @@ public class ClientHandler extends Thread {
 	}
 	
 	private void updateList() throws IOException {
+
+		for(Socket x : sockets_list) {
+			if(x.isClosed()) {
+				sockets_list.remove(x);
+			 }
+		}
 		
 		for(Socket x : sockets_list) {
+			
 			 PrintWriter broadcast_stream = new PrintWriter(x.getOutputStream(), true);
 			 String tmp = "List,";
+
+			 
 			 for(Socket y : sockets_list) {
 					if(y != x) {
 						tmp += y.getInetAddress().getHostName() + ",";
@@ -181,6 +190,8 @@ public class ClientHandler extends Thread {
 			if(admin != null) {
 				out.println("Sei l'admin! (primo utente collegato)");
 			}
+
+			out.println("CIAO FLUTTER; SONO IL SERVER");
 			
 			System.out.println("In attesa di messaggi dal client...");
 
@@ -189,6 +200,8 @@ public class ClientHandler extends Thread {
 			
 			// Legge messaggi dal client
 			while ((clientMessage = in.readLine()) != null) {
+
+				updateList();
 				System.out.println("Messaggio dal client " + s.getInetAddress().getHostName() + ": " + clientMessage);
 
 				// Controlla se il client vuole terminare la connessione
@@ -244,6 +257,38 @@ public class ClientHandler extends Thread {
 					}
 				}
 
+				else if(clientMessage.equalsIgnoreCase("/join")) {
+					
+					if(!gruppi_list.isEmpty()) {
+						clientMessage = "";
+						
+						out.println(getAllGroups());
+						
+						out.println("Inserisci il nome del gruppo a cui vuoi unirti: ");
+						
+						clientMessage = in.readLine();
+						GruppoChat temp = checkIsGroup(clientMessage);
+						
+						if(temp != null) {
+							
+							temp.aggiungiClient(s);
+							out.println("Ti sei unito al gruppo " + temp.getNomeGruppo());
+							
+						}
+						else
+						{
+							out.println("Gruppo inesistente!");
+						}
+						
+						
+						
+					}
+					else
+					{
+						out.println("Non esiste nessun gruppo! Prova ad usare /newGroup!");
+					}
+				}
+
 				
 				else{
 
@@ -284,6 +329,56 @@ public class ClientHandler extends Thread {
 		
 		
 	}
+
+
+	private GruppoChat checkIsGroup(String toCheck) {
+		
+		for(GruppoChat x : gruppi_list) {
+			
+			if(x.getNomeGruppo().trim().equalsIgnoreCase(toCheck.trim())) {
+				return x;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+
+		//solo in quelli in cui s è presente
+		private String getGroups() {
+		
+			int n_gruppi = 0;
+	
+			String tmp = "";
+	
+			for(GruppoChat x : gruppi_list) {
+	
+				if(x.findClient(s)) {
+					tmp += (n_gruppi++) + " -> " + x.getNomeGruppo() + "\n";
+					
+				}
+							
+			}
+	
+			return tmp;
+			
+		}
+		
+		private String getAllGroups() {
+			int n_gruppi = 0;
+	
+			String tmp = "";
+	
+			for(GruppoChat x : gruppi_list) {
+	
+				
+					tmp += (n_gruppi++) + " -> " + x.getNomeGruppo() + "\n";
+					
+				}
+			return tmp;
+							
+	}
 	
 	private void broadcast(String toSend) {
 		
@@ -302,7 +397,8 @@ public class ClientHandler extends Thread {
 		
 	}
 	
-	private String getGroups() {
+	//vecchio metodo
+	/*private String getGroups() {
 		
 		int n_gruppi = 0;
 
@@ -320,7 +416,7 @@ public class ClientHandler extends Thread {
 
 		return tmp;
 		
-	}
+	}*/
 	
 	private void sendMessage(String nome, String toSend) {
 		
