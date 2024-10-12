@@ -3,10 +3,14 @@ import 'dart:isolate';
 class MessageReceiver {
   late ReceivePort receivePort;
   late Isolate _isolate;
+  late Stream<dynamic>
+      broadcastStream; // Stream broadcast per permettere a più listener
   static final MessageReceiver _instance = MessageReceiver._internal();
 
   MessageReceiver._internal() {
     receivePort = ReceivePort();
+    broadcastStream =
+        receivePort.asBroadcastStream(); // Trasforma in stream broadcast
   }
 
   static MessageReceiver get instance => _instance;
