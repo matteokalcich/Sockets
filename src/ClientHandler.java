@@ -191,7 +191,6 @@ public class ClientHandler extends Thread {
 				out.println("Sei l'admin! (primo utente collegato)");
 			}
 
-			out.println("CIAO FLUTTER; SONO IL SERVER");
 			
 			System.out.println("In attesa di messaggi dal client...");
 
