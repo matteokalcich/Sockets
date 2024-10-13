@@ -15,8 +15,6 @@ class _ListChat extends State<ListChat> {
   final List<String> messages = []; // Lista dei messaggi
   final TextEditingController _controller =
       TextEditingController(); // Controller per la TextField
-  final ScrollController _scrollController =
-      ScrollController(); // Controller per il ListView
 
   List item = [];
   final List<String> clients = [];
@@ -76,7 +74,7 @@ class _ListChat extends State<ListChat> {
           Expanded(
             child: ListView.builder(
               itemCount: clients.length,
-              controller: _scrollController,
+              
               itemBuilder: (context, index) {
                 return GestureDetector(
                   child: Container(
@@ -114,9 +112,6 @@ class _ListChat extends State<ListChat> {
 
   @override
   void dispose() {
-    _controller
-        .dispose(); // Dispose del controller quando il widget viene distrutto
-    _scrollController.dispose(); // Dispose del controller dello scroll
     super.dispose();
   }
 }
