@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutterclient/screens/ListChat.dart';
 import '../backend/MessageReceiver.dart';
 import '../backend/ServerChat.dart';
-        class ChosenChat extends StatefulWidget {         
-         
-         final String name_client; // Aggiungi il parametro a ChosenChat
+
+class ChosenChat extends StatefulWidget {
+  final String name_client; // Aggiungi il parametro a ChosenChat
   final ServerChat? serverChat;
-        
-        ChosenChat({required this.name_client, required this.serverChat, Key? key})
+
+  ChosenChat({required this.name_client, required this.serverChat, Key? key})
       : super(key: key);
 
   @override
@@ -17,7 +17,6 @@ import '../backend/ServerChat.dart';
 //TODO aggiungere possibilità mandare messaggi
 
 class _ChosenChat extends State<ChosenChat> {
-
   final List<String> messages = []; // Lista dei messaggi
   final TextEditingController _controller =
       TextEditingController(); // Controller per la TextField
@@ -29,17 +28,17 @@ class _ChosenChat extends State<ChosenChat> {
     //serverChat = ServerChat(); // Inizializzo ServerChat
     //waitServerConnection(); // Avvio la connessione al server
   }
+
   Future<void> creaListener() async {
     await listener();
   }
+
   Future<void> listener() async {
     // Avvio l'Isolate per l'ascolto
     await MessageReceiver.instance.startListening();
 
-
     // Ascolto i messaggi ricevuti dall'Isolate
     MessageReceiver.instance.broadcastStream.listen((message) {
-      
       if (!message.toString().contains("List,")) {
         if (!message.toString().contains("A chi vuoi inviarlo?")) {
           setState(() {
@@ -47,7 +46,6 @@ class _ChosenChat extends State<ChosenChat> {
             _scrollToBottom(); // Scorri automaticamente verso il basso
           });
         } else {
-
           _sendMessageToWhichClient(widget.name_client);
         }
       }
@@ -56,6 +54,7 @@ class _ChosenChat extends State<ChosenChat> {
     // Quando sei pronto per iniziare a ricevere messaggi dal server
     widget.serverChat?.startReceivingMessages();
   }
+
   /*
   Future<void> waitServerConnection() async {
     await initServerConnection();
@@ -98,7 +97,7 @@ class _ChosenChat extends State<ChosenChat> {
   }
 
   // Invia il messaggiodel client a cui mandare i messaggi al server
-  Future<void> _sendMessageToWhichClient(String client) async{
+  Future<void> _sendMessageToWhichClient(String client) async {
     await widget.serverChat?.sendMessage(client); // Invia il messaggio
     await widget.serverChat?.sendMessage("/exit");
   }
@@ -111,6 +110,7 @@ class _ChosenChat extends State<ChosenChat> {
       _controller.clear(); // Pulisci il TextField
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,6 +171,7 @@ class _ChosenChat extends State<ChosenChat> {
       ),
     );
   }
+
   @override
   void dispose() {
     _controller
