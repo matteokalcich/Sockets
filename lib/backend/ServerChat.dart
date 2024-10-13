@@ -10,7 +10,7 @@ class ServerChat {
   // Metodo per connettersi al server
   Future<void> connectToServer() async {
     try {
-      socket = await Socket.connect('192.168.1.9', 3333);
+      socket = await Socket.connect('192.168.36.27', 3333);
       print(
           'Connesso al server con l\'IP: ${socket.remoteAddress.address} e porta: ${socket.remotePort}');
     } catch (e) {
