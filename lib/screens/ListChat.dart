@@ -17,7 +17,7 @@ class _ListChat extends State<ListChat> {
       TextEditingController(); // Controller per la TextField
 
   List item = [];
-  final List<String> clients = [];
+  late List<String> clients = [];
 
   @override
   void initState() {
@@ -49,6 +49,8 @@ class _ListChat extends State<ListChat> {
             //ciclo per aggiornare la lista se è stato eliminato qualcosa
           }
 
+          clients = List.empty(growable: true);
+
           item = message.toString().split(",");
 
           for (int i = 1; i < item.length - 1; i++) {
@@ -74,7 +76,6 @@ class _ListChat extends State<ListChat> {
           Expanded(
             child: ListView.builder(
               itemCount: clients.length,
-              
               itemBuilder: (context, index) {
                 return GestureDetector(
                   child: Container(
@@ -95,7 +96,7 @@ class _ListChat extends State<ListChat> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ChosenChat(
-                          name_clients: clients[index],
+                          name_client: clients[index],
                           serverChat: serverChat,
                         ),
                       ),
