@@ -39,37 +39,30 @@ class _ListChat extends State<ListChat> {
     // Connettiti al server
     await serverChat.connectToServer();
 
-    // Controlla che la connessione sia stata stabilita prima di avviare l'ascolto
-    if (serverChat.socket != null) {
-      print('Connessione riuscita!');
+    print('Connessione riuscita!');
 
-      // Avvio l'Isolate per l'ascolto
-      await MessageReceiver.instance.startListening();
-
-      // Ascolto i messaggi ricevuti dall'Isolate
-      MessageReceiver.instance.broadcastStream.listen((message) {
-        setState(() {
-          if (message.toString().contains("List")) {
-            if (item.length > message.toString().split(",").length) {
-              //ciclo per aggiornare la lista se è stato eliminato qualcosa
-            }
-
-            item = message.toString().split(",");
-
-            for (int i = 1; i < item.length - 1; i++) {
-              clients.add(item[i]);
-            }
+    // Avvio l'Isolate per l'ascolto
+    await MessageReceiver.instance.startListening();
+    // Ascolto i messaggi ricevuti dall'Isolate
+    MessageReceiver.instance.broadcastStream.listen((message) {
+      setState(() {
+        if (message.toString().contains("List")) {
+          if (item.length > message.toString().split(",").length) {
+            //ciclo per aggiornare la lista se è stato eliminato qualcosa
           }
-          //messages.add(message); // Aggiungi il messaggio alla lista
-        });
-        print("Messaggio ricevuto dall'Isolate: $message");
-      });
 
-      // Quando sei pronto per iniziare a ricevere messaggi dal server
-      serverChat.startReceivingMessages();
-    } else {
-      print('Errore: connessione al server fallita.');
-    }
+          item = message.toString().split(",");
+
+          for (int i = 1; i < item.length - 1; i++) {
+            clients.add(item[i]);
+          }
+        }
+      });
+      print("Messaggio ricevuto dall'Isolate: $message");
+    });
+
+    // Quando sei pronto per iniziare a ricevere messaggi dal server
+    serverChat.startReceivingMessages();
   }
 
   @override
@@ -99,7 +92,7 @@ class _ListChat extends State<ListChat> {
                   ),
                   onTap: () {
                     print('Hai cliccato ${clients[index]}');
-                    MessageReceiver.instance.stopListening();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
