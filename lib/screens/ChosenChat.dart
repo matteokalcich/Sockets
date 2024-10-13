@@ -41,6 +41,8 @@ class _ChosenChat extends State<ChosenChat> {
     MessageReceiver.instance.broadcastStream.listen((message) {
       if (!message.toString().contains("List,")) {
         if (!message.toString().contains("A chi vuoi inviarlo?")) {
+
+          
           setState(() {
             messages.add(message); // Aggiungi il messaggio alla lista
             _scrollToBottom(); // Scorri automaticamente verso il basso
@@ -50,6 +52,12 @@ class _ChosenChat extends State<ChosenChat> {
         }
       }
       print("Messaggio ricevuto dall'Isolate: $message");
+
+      if(message.toString().contains("broadcast")){
+
+        _sendMessageToWhichClient(widget.name_client);
+
+      }
     });
     // Quando sei pronto per iniziare a ricevere messaggi dal server
     widget.serverChat?.startReceivingMessages();
