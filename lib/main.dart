@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutterclient/screens/ChosenChat.dart';
-import 'package:flutterclient/screens/ListChat.dart';
+import './screens/ListChat.dart';
 
 void main() {
   runApp(MyApp());
