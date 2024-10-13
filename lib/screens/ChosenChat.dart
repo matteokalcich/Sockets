@@ -1,28 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutterclient/screens/ListChat.dart';
-
 import '../backend/MessageReceiver.dart';
 import '../backend/ServerChat.dart';
-
-class ChosenChat extends StatefulWidget {
-  final String name_client; // Aggiungi il parametro a ChosenChat
+        class ChosenChat extends StatefulWidget {         
+         
+         final String name_client; // Aggiungi il parametro a ChosenChat
   final ServerChat? serverChat;
-
-  // Costruttore per il widget ChosenChat
-  ChosenChat({required this.name_client, required this.serverChat, Key? key})
+        
+        ChosenChat({required this.name_client, required this.serverChat, Key? key})
       : super(key: key);
 
   @override
   _ChosenChat createState() => _ChosenChat();
 }
 
+//TODO aggiungere possibilità mandare messaggi
+
 class _ChosenChat extends State<ChosenChat> {
+
   final List<String> messages = []; // Lista dei messaggi
   final TextEditingController _controller =
       TextEditingController(); // Controller per la TextField
   final ScrollController _scrollController = ScrollController();
-
-
   @override
   void initState() {
     super.initState();
@@ -30,33 +29,30 @@ class _ChosenChat extends State<ChosenChat> {
     //serverChat = ServerChat(); // Inizializzo ServerChat
     //waitServerConnection(); // Avvio la connessione al server
   }
-
   Future<void> creaListener() async {
     await listener();
   }
-
   Future<void> listener() async {
     // Avvio l'Isolate per l'ascolto
     await MessageReceiver.instance.startListening();
 
+
     // Ascolto i messaggi ricevuti dall'Isolate
     MessageReceiver.instance.broadcastStream.listen((message) {
+      
       if (!message.toString().contains("List,")) {
         if (!message.toString().contains("A chi vuoi inviarlo?")) {
           setState(() {
-
             messages.add(message); // Aggiungi il messaggio alla lista
             _scrollToBottom(); // Scorri automaticamente verso il basso
-
           });
         } else {
-          _sendMessageToWhichClient(widget.name_client);
 
+          _sendMessageToWhichClient(widget.name_client);
         }
       }
       print("Messaggio ricevuto dall'Isolate: $message");
     });
-
     // Quando sei pronto per iniziare a ricevere messaggi dal server
     widget.serverChat?.startReceivingMessages();
   }
@@ -64,23 +60,17 @@ class _ChosenChat extends State<ChosenChat> {
   Future<void> waitServerConnection() async {
     await initServerConnection();
   }
-
   
-
   // Inizializza la connessione al server e l'ascolto dei messaggi
   Future<void> initServerConnection() async {
     print('Tentativo di connessione al server...');
-
     // Connettiti al server
     await serverChat.connectToServer();
-
     // Controlla che la connessione sia stata stabilita prima di avviare l'ascolto
     if (serverChat.socket != null) {
       print('Connessione riuscita!');
-
       // Avvio l'Isolate per l'ascolto
       await MessageReceiver.instance.startListening();
-
       // Ascolto i messaggi ricevuti dall'Isolate
       MessageReceiver.instance.receivePort.listen((message) {
         setState(() {
@@ -89,16 +79,13 @@ class _ChosenChat extends State<ChosenChat> {
         });
         print("Messaggio ricevuto dall'Isolate: $message");
       });
-
       // Quando sei pronto per iniziare a ricevere messaggi dal server
       serverChat.startReceivingMessages();
     } else {
       print('Errore: connessione al server fallita.');
     }
   }
-
   */
-
   // Scorri automaticamente verso l'ultimo messaggio
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -111,10 +98,9 @@ class _ChosenChat extends State<ChosenChat> {
   }
 
   // Invia il messaggiodel client a cui mandare i messaggi al server
-  Future<void> _sendMessageToWhichClient(String client) async {
+  Future<void> _sendMessageToWhichClient(String client) async{
     await widget.serverChat?.sendMessage(client); // Invia il messaggio
     await widget.serverChat?.sendMessage("/exit");
-
   }
 
   // Invia un messaggio al server
@@ -125,7 +111,6 @@ class _ChosenChat extends State<ChosenChat> {
       _controller.clear(); // Pulisci il TextField
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,7 +134,6 @@ class _ChosenChat extends State<ChosenChat> {
                       child: IntrinsicWidth(
                         child: ListTile(
                           title: Text(
-                            
                             messages[index],
                             style: TextStyle(color: Colors.white),
                           ),
@@ -187,7 +171,6 @@ class _ChosenChat extends State<ChosenChat> {
       ),
     );
   }
-
   @override
   void dispose() {
     _controller

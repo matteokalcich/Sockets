@@ -1,5 +1,4 @@
 import 'dart:isolate';
-
 import 'package:flutter/material.dart';
 import 'package:flutterclient/screens/ChosenChat.dart';
 import '../backend/ServerChat.dart';
@@ -16,8 +15,9 @@ class _ListChat extends State<ListChat> {
   final TextEditingController _controller =
       TextEditingController(); // Controller per la TextField
 
-  List item = [];
   late List<String> clients = [];
+  List item = [];
+
 
   @override
   void initState() {
@@ -33,12 +33,9 @@ class _ListChat extends State<ListChat> {
   // Inizializza la connessione al server e l'ascolto dei messaggi
   Future<void> initServerConnection() async {
     print('Tentativo di connessione al server...');
-
     // Connettiti al server
     await serverChat.connectToServer();
-
     print('Connessione riuscita!');
-
     // Avvio l'Isolate per l'ascolto
     await MessageReceiver.instance.startListening();
     // Ascolto i messaggi ricevuti dall'Isolate
@@ -60,7 +57,6 @@ class _ListChat extends State<ListChat> {
       });
       print("Messaggio ricevuto dall'Isolate: $message");
     });
-
     // Quando sei pronto per iniziare a ricevere messaggi dal server
     serverChat.startReceivingMessages();
   }
@@ -91,7 +87,6 @@ class _ListChat extends State<ListChat> {
                   ),
                   onTap: () {
                     print('Hai cliccato ${clients[index]}');
-
                     Navigator.push(
                       context,
                       MaterialPageRoute(
