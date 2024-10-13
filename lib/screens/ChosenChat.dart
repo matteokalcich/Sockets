@@ -44,15 +44,20 @@ class _ChosenChat extends State<ChosenChat> {
     
     // Ascolto i messaggi ricevuti dall'Isolate
     MessageReceiver.instance.broadcastStream.listen((message) {
-      setState(() {
-        messages.add(message); // Aggiungi il messaggio alla lista
-        _scrollToBottom(); // Scorri automaticamente verso il basso
-      });
+
+      if(!message.toString().contains("List,")){
+
+        setState(() {
+          messages.add(message); // Aggiungi il messaggio alla lista
+          _scrollToBottom(); // Scorri automaticamente verso il basso
+        });
+
+      }
       print("Messaggio ricevuto dall'Isolate: $message");
     });
 
     // Quando sei pronto per iniziare a ricevere messaggi dal server
-    //widget.serverChat?.startReceivingMessages();
+    widget.serverChat?.startReceivingMessages();
   }
   /*
   Future<void> waitServerConnection() async {
