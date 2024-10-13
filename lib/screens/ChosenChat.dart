@@ -22,6 +22,7 @@ class _ChosenChat extends State<ChosenChat> {
       TextEditingController(); // Controller per la TextField
   final ScrollController _scrollController = ScrollController();
 
+
   @override
   void initState() {
     super.initState();
@@ -43,12 +44,14 @@ class _ChosenChat extends State<ChosenChat> {
       if (!message.toString().contains("List,")) {
         if (!message.toString().contains("A chi vuoi inviarlo?")) {
           setState(() {
+
             messages.add(message); // Aggiungi il messaggio alla lista
             _scrollToBottom(); // Scorri automaticamente verso il basso
+
           });
         } else {
-
           _sendMessageToWhichClient(widget.name_client);
+
         }
       }
       print("Messaggio ricevuto dall'Isolate: $message");
@@ -108,9 +111,10 @@ class _ChosenChat extends State<ChosenChat> {
   }
 
   // Invia il messaggiodel client a cui mandare i messaggi al server
-  Future<void> _sendMessageToWhichClient(String client) async{
+  Future<void> _sendMessageToWhichClient(String client) async {
     await widget.serverChat?.sendMessage(client); // Invia il messaggio
     await widget.serverChat?.sendMessage("/exit");
+
   }
 
   // Invia un messaggio al server
@@ -145,6 +149,7 @@ class _ChosenChat extends State<ChosenChat> {
                       child: IntrinsicWidth(
                         child: ListTile(
                           title: Text(
+                            
                             messages[index],
                             style: TextStyle(color: Colors.white),
                           ),
