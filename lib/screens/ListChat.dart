@@ -78,10 +78,18 @@ class _ListChat extends State<ListChat> {
                     color: Colors.white,
                     child: IntrinsicWidth(
                       child: ListTile(
+
+                        leading: CircleAvatar(
+                          child: Image.network(
+                              'https://static-00.iconduck.com/assets.00/avatar-icon-512x512-gu21ei4u.png'),
+                        ),
+
                         title: Text(
                           clients[index],
                           style: TextStyle(color: Colors.black),
                         ),
+
+                        trailing: Text("ultima chat"),
                       ),
                     ),
                   ),
