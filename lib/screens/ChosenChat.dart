@@ -96,7 +96,7 @@ class _ChosenChat extends State<ChosenChat> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
+        duration: Duration(seconds: 1),
         curve: Curves.easeOut,
       );
     }
@@ -139,6 +139,8 @@ class _ChosenChat extends State<ChosenChat> {
                       color: Colors.black,
                       child: IntrinsicWidth(
                         child: ListTile(
+
+                          
                           title: Text(
                             messages[index],
                             style: TextStyle(color: Colors.white),
