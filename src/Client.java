@@ -14,6 +14,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import ui.IoHandler;
+
 
 public class Client {
 
@@ -33,7 +35,7 @@ public class Client {
 
         try{
 
-            System.out.print("IP: ");
+            IoHandler.Print("IP: ");
             ip = sc.nextLine();
             
 
@@ -51,7 +53,7 @@ public class Client {
 
             try{
 
-                System.out.print("PORT: ");
+                IoHandler.Print("PORT: ");
                 port = Integer.parseInt(sc.nextLine());
                 tmp = false;
             
@@ -76,10 +78,16 @@ public class Client {
             //this.name_client = name_client;
 
             // Creo thread che ascolta per messaggi del server
-            new Thread(this::listenForServerMessages).start();
+            Thread serverMsg = new Thread(this::listenForServerMessages);
+            serverMsg.setPriority(Thread.MAX_PRIORITY);
+            serverMsg.start();
+
+            
 
             // Creo thread che cattura sempre un input fino allas stringa 'exit'
-            new Thread(this::captureInput).start();
+            Thread getInput = new Thread(this::captureInput);
+            getInput.setPriority(Thread.MIN_PRIORITY);
+            getInput.start();
             
 
             
@@ -96,15 +104,12 @@ public class Client {
                 String input = in_stream.readLine();
 
                 if ("stop".equalsIgnoreCase(input)) {
-                    System.out.print("\n - " + input);
+                    IoHandler.PrintMessage("\n - " + input);
                     closeConnection();
                     System.exit(0);
                     
-                }
-                
-                else {
-                    System.out.println("Risposta del server: " + input);
-
+                } else if(!input.isEmpty()){
+                    IoHandler.PrintMessage(" - Risposta del server: " + input);
                 }
                 
             } catch (IOException e) {
@@ -118,17 +123,21 @@ public class Client {
     }
 
     private void captureInput() {
-        System.out.println("Inizia a scrivere");
+        IoHandler.PrintMessage("Inizia a scrivere");
         while (bool_inptCapt) {
             try {
-                System.out.print("\n - ");
+
+                IoHandler.Print("\n - ");
                 String input = sc.nextLine();
                 out_stream.println(input); // Invia il messaggio al server
-                if ("chiuso".equalsIgnoreCase(input)) {
+
+                if ("chiuso".equalsIgnoreCase(input) || "exit".equalsIgnoreCase(input)) {
                     bool_listenSrv = false;
+                    closeConnection();
+                    System.exit(0);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
     }
@@ -140,7 +149,7 @@ public class Client {
             out_stream.close();
             s.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
     
