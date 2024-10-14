@@ -127,7 +127,7 @@ public class Client {
         while (bool_inptCapt) {
             try {
 
-                IoHandler.Print("\n - ");
+                
                 String input = sc.nextLine();
                 out_stream.println(input); // Invia il messaggio al server
 
