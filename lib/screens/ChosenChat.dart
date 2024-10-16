@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutterclient/screens/ListChat.dart';
 import '../backend/MessageReceiver.dart';
@@ -14,19 +16,18 @@ class ChosenChat extends StatefulWidget {
   _ChosenChat createState() => _ChosenChat();
 }
 
-//TODO aggiungere possibilità mandare messaggi
-
 class _ChosenChat extends State<ChosenChat> {
-  final List<String> messages = []; // Lista dei messaggi
+  final List<String> receivedMessages = []; // Lista dei messaggi ricevuti
+  final List<String> sentMessages = []; // Lista dei messaggi inviati
   final TextEditingController _controller =
       TextEditingController(); // Controller per la TextField
   final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController1 = ScrollController();
+
   @override
   void initState() {
     super.initState();
     creaListener();
-    //serverChat = ServerChat(); // Inizializzo ServerChat
-    //waitServerConnection(); // Avvio la connessione al server
   }
 
   Future<void> creaListener() async {
@@ -34,64 +35,30 @@ class _ChosenChat extends State<ChosenChat> {
   }
 
   Future<void> listener() async {
-    // Avvio l'Isolate per l'ascolto
     await MessageReceiver.instance.startListening();
 
-    // Ascolto i messaggi ricevuti dall'Isolate
     MessageReceiver.instance.broadcastStream.listen((message) {
       if (!message.toString().contains("List,")) {
         if (!message.toString().contains("A chi vuoi inviarlo?")) {
           setState(() {
-            messages.add(message); // Aggiungi il messaggio alla lista
+            receivedMessages
+                .add(message); // Aggiungi il messaggio ricevuto alla lista
             _scrollToBottom(); // Scorri automaticamente verso il basso
           });
         } else {
           _sendMessageToWhichClient(widget.name_client);
         }
       }
-      print("Messaggio ricevuto dall'Isolate: $message");
 
       if (message.toString().contains("broadcast")) {
-        messages.remove(message);
-
+        receivedMessages.remove(message);
         _sendMessageToWhichClient(widget.name_client);
       }
     });
-    // Quando sei pronto per iniziare a ricevere messaggi dal server
+
     widget.serverChat?.startReceivingMessages();
   }
 
-  /*
-  Future<void> waitServerConnection() async {
-    await initServerConnection();
-  }
-  
-  // Inizializza la connessione al server e l'ascolto dei messaggi
-  Future<void> initServerConnection() async {
-    print('Tentativo di connessione al server...');
-    // Connettiti al server
-    await serverChat.connectToServer();
-    // Controlla che la connessione sia stata stabilita prima di avviare l'ascolto
-    if (serverChat.socket != null) {
-      print('Connessione riuscita!');
-      // Avvio l'Isolate per l'ascolto
-      await MessageReceiver.instance.startListening();
-      // Ascolto i messaggi ricevuti dall'Isolate
-      MessageReceiver.instance.receivePort.listen((message) {
-        setState(() {
-          messages.add(message); // Aggiungi il messaggio alla lista
-          _scrollToBottom(); // Scorri automaticamente verso il basso
-        });
-        print("Messaggio ricevuto dall'Isolate: $message");
-      });
-      // Quando sei pronto per iniziare a ricevere messaggi dal server
-      serverChat.startReceivingMessages();
-    } else {
-      print('Errore: connessione al server fallita.');
-    }
-  }
-  */
-  // Scorri automaticamente verso l'ultimo messaggio
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
@@ -102,18 +69,25 @@ class _ChosenChat extends State<ChosenChat> {
     }
   }
 
-  // Invia il messaggiodel client a cui mandare i messaggi al server
   Future<void> _sendMessageToWhichClient(String client) async {
-    await widget.serverChat?.sendMessage(client); // Invia il messaggio
-    await widget.serverChat?.sendMessage("/exit");
+    String tmp = "$client\n/exit";
+    await widget.serverChat?.sendMessage(tmp); // Invia il messaggio
+    //await widget.serverChat?.sendMessage("/exit");
   }
 
-  // Invia un messaggio al server
   void _sendMessage() {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
+      setState(() {
+        sentMessages.add(text); // Aggiungi il messaggio inviato alla lista
+      });
       widget.serverChat?.sendMessage(text); // Invia il messaggio
       _controller.clear(); // Pulisci il TextField
+      _scrollController1.animateTo(
+        _scrollController1.position.maxScrollExtent,
+        duration: Duration(seconds: 1),
+        curve: Curves.easeOut,
+      );
     }
   }
 
@@ -126,49 +100,99 @@ class _ChosenChat extends State<ChosenChat> {
       body: Column(
         children: [
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Expanded(
-                child: ListView.builder(
-                  itemCount: messages.length,
-                  controller: _scrollController,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      color: Colors.black,
-                      child: IntrinsicWidth(
-                        child: ListTile(
-
-                          
-                          title: Text(
-                            messages[index],
-                            style: TextStyle(color: Colors.white),
-                          ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      const Text('Messaggi ricevuti'),
+                      const SizedBox(height: 20),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: receivedMessages.length,
+                          controller: _scrollController,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    50), // Bordo circolare
+                                color: Colors.red, // Colore di sfondo rosso
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 5,
+                                  horizontal: 10), // Margine tra gli elementi
+                              child: IntrinsicWidth(
+                                child: ListTile(
+                                  title: Text(
+                                    receivedMessages[index],
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ),
+                const VerticalDivider(
+                  color: Colors.black,
+                  thickness: 3,
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      const Text('Messaggi inviati'),
+                      const SizedBox(height: 20),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: sentMessages.length,
+                          controller: _scrollController1,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                    50), // Bordo circolare
+                                color: Colors.blueAccent
+                                    .withOpacity(0.7), // Colore di sfondo
+                              ),
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 5,
+                                  horizontal: 10), // Margine tra gli elementi
+                              child: IntrinsicWidth(
+                                child: ListTile(
+                                  title: Text(
+                                    sentMessages[index],
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
-              mainAxisSize: MainAxisSize.max, // Imposta la larghezza massima
               children: [
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Invia un messaggio',
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed:
                       _sendMessage, // Chiama la funzione per inviare messaggi
                 ),
@@ -185,6 +209,7 @@ class _ChosenChat extends State<ChosenChat> {
     _controller
         .dispose(); // Dispose del controller quando il widget viene distrutto
     _scrollController.dispose(); // Dispose del controller dello scroll
+    _scrollController1.dispose();
     super.dispose();
   }
 }
