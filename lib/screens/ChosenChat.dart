@@ -63,7 +63,7 @@ class _ChosenChat extends State<ChosenChat> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
         curve: Curves.easeOut,
       );
     }
@@ -109,6 +109,7 @@ class _ChosenChat extends State<ChosenChat> {
                       const SizedBox(height: 20),
                       Expanded(
                         child: ListView.builder(
+                          reverse: true,
                           itemCount: receivedMessages.length,
                           controller: _scrollController,
                           itemBuilder: (context, index) {
@@ -147,6 +148,7 @@ class _ChosenChat extends State<ChosenChat> {
                       const SizedBox(height: 20),
                       Expanded(
                         child: ListView.builder(
+                          reverse: true,
                           itemCount: sentMessages.length,
                           controller: _scrollController1,
                           itemBuilder: (context, index) {
