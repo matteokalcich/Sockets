@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutterclient/screens/ListChat.dart';
+import 'package:link_text/link_text.dart';
 import '../backend/MessageReceiver.dart';
 import '../backend/ServerChat.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChosenChat extends StatefulWidget {
   final String name_client; // Aggiungi il parametro a ChosenChat
@@ -23,6 +24,8 @@ class _ChosenChat extends State<ChosenChat> {
       TextEditingController(); // Controller per la TextField
   final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollController1 = ScrollController();
+
+  final Uri url = Uri.parse('https://flutter.dev');
 
   @override
   void initState() {
@@ -163,11 +166,21 @@ class _ChosenChat extends State<ChosenChat> {
                                   vertical: 5,
                                   horizontal: 10), // Margine tra gli elementi
                               child: IntrinsicWidth(
-                                child: ListTile(
-                                  title: Text(
-                                    sentMessages[index],
-                                    style: const TextStyle(color: Colors.white),
+                                child: GestureDetector(
+                                  child: ListTile(
+                                    title: Text(
+                                      sentMessages[index],
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
                                   ),
+                                  onTap: () async {
+                                    if (sentMessages[index].contains('www') ||
+                                        sentMessages[index].contains('htt')) {
+                                      List<String> t = sentMessages[index].split('www');
+                                    }
+                                    await launchUrl(url);
+                                  },
                                 ),
                               ),
                             );
