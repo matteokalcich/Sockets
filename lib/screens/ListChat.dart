@@ -18,7 +18,6 @@ class _ListChat extends State<ListChat> {
   late List<String> clients = [];
   List item = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -67,6 +66,7 @@ class _ListChat extends State<ListChat> {
       appBar: AppBar(
         title: Text('Lista Chat'),
       ),
+      backgroundColor: Color.fromARGB(255, 189, 195, 199),
       body: Column(
         children: [
           Expanded(
@@ -75,20 +75,27 @@ class _ListChat extends State<ListChat> {
               itemBuilder: (context, index) {
                 return GestureDetector(
                   child: Container(
-                    color: Colors.white,
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 189, 195, 199),
+                      border: Border.symmetric(
+                          horizontal: BorderSide(
+                        color: Colors.white,
+                      )),
+                    ),
                     child: IntrinsicWidth(
                       child: ListTile(
-
                         leading: CircleAvatar(
                           child: Image.network(
                               'https://static-00.iconduck.com/assets.00/avatar-icon-512x512-gu21ei4u.png'),
                         ),
-
                         title: Text(
                           clients[index],
-                          style: TextStyle(color: Colors.black),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 18,
+                          ),
                         ),
-
                         trailing: Text("ultima chat"),
                       ),
                     ),
