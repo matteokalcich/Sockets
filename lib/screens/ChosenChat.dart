@@ -136,8 +136,9 @@ class _ChosenChat extends State<ChosenChat> {
                                     onOpen: _onOpenLink,
                                     text: receivedMessages[index],
                                     style: const TextStyle(color: Colors.white),
-                                    linkStyle:
-                                        const TextStyle(color: Colors.blue),
+                                    linkStyle: const TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 176, 220, 255)),
                                   ),
                                 ),
                               ),
@@ -178,9 +179,10 @@ class _ChosenChat extends State<ChosenChat> {
                                   title: Linkify(
                                     onOpen: _onOpenLink,
                                     text: sentMessages[index],
-                                    style: const TextStyle(fontSize: 25),
-                                    linkStyle:
-                                        const TextStyle(color: Colors.blue),
+                                    style: const TextStyle(color: Colors.white),
+                                    linkStyle: const TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 160, 200, 232)),
                                   ),
                                 ),
                               ),
@@ -195,7 +197,7 @@ class _ChosenChat extends State<ChosenChat> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(bottom: 18.0, left: 8.0),
             child: Row(
               children: [
                 Expanded(
