@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:link_text/link_text.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import '../backend/MessageReceiver.dart';
 import '../backend/ServerChat.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,8 +24,6 @@ class _ChosenChat extends State<ChosenChat> {
       TextEditingController(); // Controller per la TextField
   final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollController1 = ScrollController();
-
-  final Uri url = Uri.parse('https://flutter.dev');
 
   @override
   void initState() {
@@ -75,7 +73,6 @@ class _ChosenChat extends State<ChosenChat> {
   Future<void> _sendMessageToWhichClient(String client) async {
     String tmp = "$client\n/exit";
     await widget.serverChat?.sendMessage(tmp); // Invia il messaggio
-    //await widget.serverChat?.sendMessage("/exit");
   }
 
   void _sendMessage() {
@@ -88,9 +85,17 @@ class _ChosenChat extends State<ChosenChat> {
       _controller.clear(); // Pulisci il TextField
       _scrollController1.animateTo(
         _scrollController1.position.maxScrollExtent,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
         curve: Curves.easeOut,
       );
+    }
+  }
+
+  Future<void> _onOpenLink(LinkableElement link) async {
+    if (await canLaunch(link.url)) {
+      await launch(link.url);
+    } else {
+      throw 'Could not launch ${link.url}';
     }
   }
 
@@ -98,7 +103,7 @@ class _ChosenChat extends State<ChosenChat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Server Chat'),
+        title: const Text('Server Chat'),
       ),
       body: Column(
         children: [
@@ -127,9 +132,12 @@ class _ChosenChat extends State<ChosenChat> {
                                   horizontal: 10), // Margine tra gli elementi
                               child: IntrinsicWidth(
                                 child: ListTile(
-                                  title: Text(
-                                    receivedMessages[index],
+                                  title: Linkify(
+                                    onOpen: _onOpenLink,
+                                    text: receivedMessages[index],
                                     style: const TextStyle(color: Colors.white),
+                                    linkStyle:
+                                        const TextStyle(color: Colors.blue),
                                   ),
                                 ),
                               ),
@@ -166,21 +174,14 @@ class _ChosenChat extends State<ChosenChat> {
                                   vertical: 5,
                                   horizontal: 10), // Margine tra gli elementi
                               child: IntrinsicWidth(
-                                child: GestureDetector(
-                                  child: ListTile(
-                                    title: Text(
-                                      sentMessages[index],
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
+                                child: ListTile(
+                                  title: Linkify(
+                                    onOpen: _onOpenLink,
+                                    text: sentMessages[index],
+                                    style: const TextStyle(fontSize: 25),
+                                    linkStyle:
+                                        const TextStyle(color: Colors.blue),
                                   ),
-                                  onTap: () async {
-                                    if (sentMessages[index].contains('www') ||
-                                        sentMessages[index].contains('htt')) {
-                                      List<String> t = sentMessages[index].split('www');
-                                    }
-                                    await launchUrl(url);
-                                  },
                                 ),
                               ),
                             );
