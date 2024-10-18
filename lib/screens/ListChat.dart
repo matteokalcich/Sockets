@@ -1,4 +1,3 @@
-import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:flutterclient/screens/ChosenChat.dart';
 import '../backend/ServerChat.dart';
@@ -12,8 +11,6 @@ class ListChat extends StatefulWidget {
 class _ListChat extends State<ListChat> {
   late ServerChat serverChat; // Istanza del server chat
   final List<String> messages = []; // Lista dei messaggi
-  final TextEditingController _controller =
-      TextEditingController(); // Controller per la TextField
 
   late List<String> clients = [];
   List item = [];
@@ -96,7 +93,7 @@ class _ListChat extends State<ListChat> {
                             fontSize: 18,
                           ),
                         ),
-                        trailing: Text("ultima chat"),
+                        trailing: Text("ultima chat"), //clients[index].getUltimoMsg
                       ),
                     ),
                   ),
