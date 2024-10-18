@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterclient/screens/ChosenChat.dart';
+import './ChosenChat.dart';
 import '../backend/ServerChat.dart';
 import '../backend/MessageReceiver.dart';
 
