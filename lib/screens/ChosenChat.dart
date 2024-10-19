@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:mysql_client/exception.dart';
 import '../backend/MessageReceiver.dart';
 import '../backend/ServerChat.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mysql_client/mysql_client.dart';
 
 class ChosenChat extends StatefulWidget {
   final String name_client; // Aggiungi il parametro a ChosenChat
   final ServerChat? serverChat;
 
-  ChosenChat({required this.name_client, required this.serverChat, Key? key})
-      : super(key: key);
+  const ChosenChat(
+      {required this.name_client, required this.serverChat, super.key});
 
   @override
   _ChosenChat createState() => _ChosenChat();
@@ -25,10 +27,58 @@ class _ChosenChat extends State<ChosenChat> {
   final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollController1 = ScrollController();
 
+  late final dbConnection;
+
   @override
   void initState() {
     super.initState();
+
+    createConnection();
+    createTable();
+    insertIntoTable();
+    updateTable();
     creaListener();
+  }
+
+  void updateTable() async {
+    try {
+      await dbConnection.execute(
+          "UPDATE ${widget.name_client} SET Messaggio = 'messaggio inviato' WHERE id = 1;");
+    } on MySQLServerException catch (e) {
+      print('Errore MySQL: $e');
+    } catch (e) {
+      print('Errore generico: $e');
+    }
+  }
+
+  void insertIntoTable() async {
+    await dbConnection.execute(
+        "INSERT INTO ${widget.name_client} (Messaggio, Orario) VALUES ('messaggio iniziale', '12:00:00');");
+  }
+
+  void createTable() async {
+    try {
+      await dbConnection.execute(
+        "CREATE TABLE ${widget.name_client} (id INT AUTO_INCREMENT, Messaggio VARCHAR(255), Orario TIME, PRIMARY KEY (id));",
+        //"INSERT INTO prova (cella, nome) VALUES ('test', 'X')",
+      );
+    } on MySQLServerException catch (e) {
+      print('$e');
+    } catch (e) {
+      print('errore');
+    }
+  }
+
+  void createConnection() {
+    dbConnection = MySQLConnectionPool(
+      host: '192.168.193.186',
+      port: 3306,
+      userName: 'develop',
+      password: '1',
+      maxConnections: 100,
+      databaseName: 'chat', // optional,
+      secure: false,
+    );
   }
 
   Future<void> creaListener() async {
@@ -81,7 +131,8 @@ class _ChosenChat extends State<ChosenChat> {
       setState(() {
         sentMessages.add(text); // Aggiungi il messaggio inviato alla lista
       });
-      widget.serverChat?.sendMessage(text); // Invia il messaggio
+
+      widget.serverChat?.sendMessage(text); // Invia il messaggio al server
       _controller.clear(); // Pulisci il TextField
       _scrollController1.animateTo(
         _scrollController1.position.maxScrollExtent,
