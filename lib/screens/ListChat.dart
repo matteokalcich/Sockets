@@ -38,9 +38,6 @@ class _ListChat extends State<ListChat> {
     MessageReceiver.instance.broadcastStream.listen((message) {
       setState(() {
         if (message.toString().contains("List")) {
-          if (item.length > message.toString().split(",").length) {
-            //ciclo per aggiornare la lista se è stato eliminato qualcosa
-          }
 
           clients = List.empty(growable: true);
 
@@ -93,7 +90,8 @@ class _ListChat extends State<ListChat> {
                             fontSize: 18,
                           ),
                         ),
-                        trailing: Text("ultima chat"), //clients[index].getUltimoMsg
+                        trailing:
+                            Text("ultima chat"), //clients[index].getUltimoMsg
                       ),
                     ),
                   ),
