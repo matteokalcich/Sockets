@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutterclient/backend/DatabaseCommunication.dart';
 import 'package:mysql_client/exception.dart';
+import 'package:mysql_client/mysql_client.dart';
 import '../backend/MessageReceiver.dart';
 import '../backend/ServerChat.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:mysql_client/mysql_client.dart';
 
 class ChosenChat extends StatefulWidget {
   final String name_client; // Aggiungi il parametro a ChosenChat
@@ -29,38 +30,22 @@ class _ChosenChat extends State<ChosenChat> {
 
   late final dbConnection;
 
-  @override
-  void initState() {
-    super.initState();
-
-    createConnection();
-    createTable();
-    insertIntoTable();
-    updateTable();
-    creaListener();
+  void createConnection() {
+    dbConnection = MySQLConnectionPool(
+      host: '192.168.193.186',
+      port: 3306,
+      userName: 'develop',
+      password: '1',
+      maxConnections: 10000,
+      databaseName: 'chat', // optional,
+      secure: false,
+    );
   }
 
-  void updateTable() async {
+  void createTable(nomeTabella) async {
     try {
       await dbConnection.execute(
-          "UPDATE ${widget.name_client} SET Messaggio = 'messaggio inviato' WHERE id = 1;");
-    } on MySQLServerException catch (e) {
-      print('Errore MySQL: $e');
-    } catch (e) {
-      print('Errore generico: $e');
-    }
-  }
-
-  void insertIntoTable() async {
-    await dbConnection.execute(
-        "INSERT INTO ${widget.name_client} (Messaggio, Orario) VALUES ('messaggio iniziale', '12:00:00');");
-  }
-
-  void createTable() async {
-    try {
-      await dbConnection.execute(
-        "CREATE TABLE ${widget.name_client} (id INT AUTO_INCREMENT, Messaggio VARCHAR(255), Orario TIME, PRIMARY KEY (id));",
-        //"INSERT INTO prova (cella, nome) VALUES ('test', 'X')",
+        "CREATE TABLE $nomeTabella (id INT AUTO_INCREMENT, Messaggio VARCHAR(255), Orario TIME, PRIMARY KEY (id));",
       );
     } on MySQLServerException catch (e) {
       print('$e');
@@ -69,16 +54,19 @@ class _ChosenChat extends State<ChosenChat> {
     }
   }
 
-  void createConnection() {
-    dbConnection = MySQLConnectionPool(
-      host: '192.168.193.186',
-      port: 3306,
-      userName: 'develop',
-      password: '1',
-      maxConnections: 100,
-      databaseName: 'chat', // optional,
-      secure: false,
-    );
+  void insertIntoTable(nomeTabella, sentMsg, orario) async {
+    await dbConnection.execute(
+        "INSERT INTO $nomeTabella (Messaggio, Orario) VALUES ('$sentMsg', '$orario');");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    createConnection();
+    createTable(widget.name_client);
+
+    creaListener();
   }
 
   Future<void> creaListener() async {
@@ -150,6 +138,16 @@ class _ChosenChat extends State<ChosenChat> {
     }
   }
 
+  String getDate() {
+    return DateTime.now().toString().split(' ')[1].split('.')[0];
+  }
+
+  String getReceivedMsg(index) {
+    insertIntoTable(widget.name_client, receivedMessages[index], getDate());
+
+    return receivedMessages[index];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,7 +183,7 @@ class _ChosenChat extends State<ChosenChat> {
                                 child: ListTile(
                                   title: Linkify(
                                     onOpen: _onOpenLink,
-                                    text: receivedMessages[index],
+                                    text: getReceivedMsg(index),
                                     style: const TextStyle(color: Colors.white),
                                     linkStyle: const TextStyle(
                                         color:
@@ -201,8 +199,7 @@ class _ChosenChat extends State<ChosenChat> {
                   ),
                 ),
                 const VerticalDivider(
-                  color: Colors.black,
-                  thickness: 3,
+                  thickness: 0,
                 ),
                 Expanded(
                   child: Column(
@@ -219,8 +216,7 @@ class _ChosenChat extends State<ChosenChat> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(
                                     50), // Bordo circolare
-                                color: Colors.blueAccent
-                                    .withOpacity(0.7), // Colore di sfondo
+                                color: Colors.blueAccent, // Colore di sfondo
                               ),
                               margin: const EdgeInsets.symmetric(
                                   vertical: 5,

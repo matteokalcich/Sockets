@@ -38,7 +38,6 @@ class _ListChat extends State<ListChat> {
     MessageReceiver.instance.broadcastStream.listen((message) {
       setState(() {
         if (message.toString().contains("List")) {
-
           clients = List.empty(growable: true);
 
           item = message.toString().split(",");
